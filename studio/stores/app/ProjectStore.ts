@@ -3,7 +3,7 @@ import { Project } from 'types'
 import { IRootStore } from '../RootStore'
 import { constructHeaders } from 'lib/api/apiHelpers'
 import { get } from 'lib/common/fetch'
-import { PROJECT_STATUS } from 'lib/constants'
+import { API_URL, PROJECT_STATUS } from 'lib/constants'
 import PostgresMetaInterface, { IPostgresMetaInterface } from '../common/PostgresMetaInterface'
 
 import pingPostgrest from 'lib/pingPostgrest'
@@ -64,10 +64,13 @@ export default class ProjectStore extends PostgresMetaInterface<Project> {
   async pingPostgrest(project: Project): Promise<'ONLINE' | 'OFFLINE' | undefined> {
     if (
       project.status === PROJECT_STATUS.ACTIVE_HEALTHY &&
-      project.restUrl &&
-      project.internalApiKey
+      project.restUrl
     ) {
-      const success = await pingPostgrest(project.restUrl, project.internalApiKey, {
+      const response = await get(`${API_URL}/props/project/${project.ref}/api`)
+      if (response.error || response.autoApiService.service_api_keys.length === 0) return undefined
+      const { autoApiService: { serviceApiKey } } = response
+
+      const success = await pingPostgrest(project.restUrl, serviceApiKey, {
         kpsVersion: project.kpsVersion,
       })
       return success ? 'ONLINE' : 'OFFLINE'

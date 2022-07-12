@@ -6,6 +6,8 @@ import { Badge, Button, IconLoader, IconMonitor, IconServer, Modal } from '@supa
 import { Project } from 'types'
 import { useStore } from 'hooks'
 import ShimmerLine from 'components/ui/ShimmerLine'
+import { get } from 'lib/common/fetch'
+import { API_URL } from 'lib/constants'
 import pingPostgrest from 'lib/pingPostgrest'
 
 interface Props {
@@ -26,7 +28,7 @@ const ConnectingState: FC<Props> = ({ project }) => {
   }, [])
 
   useEffect(() => {
-    if (!project.restUrl || !project.internalApiKey) return
+    if (!project.restUrl) return
 
     // Check project connection status every 4 seconds
     // pingPostgrest timeouts in 2s, wait for another 2s before checking again
@@ -37,7 +39,11 @@ const ConnectingState: FC<Props> = ({ project }) => {
   }, [project])
 
   const testProjectConnection = async () => {
-    const result = await pingPostgrest(project.restUrl!, project.internalApiKey!, {
+    const response = await get(`${API_URL}/props/project/${project.ref}/api`)
+    if (response.error) return
+    const { autoApiService: { serviceApiKey } } = response
+
+    const result = await pingPostgrest(project.restUrl!, serviceApiKey, {
       kpsVersion: project.kpsVersion,
     })
     if (result) {
