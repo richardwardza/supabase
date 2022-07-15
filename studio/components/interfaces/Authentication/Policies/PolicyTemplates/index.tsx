@@ -5,6 +5,8 @@ import { isEmpty } from 'lodash'
 import TemplatesList from './TemplatesList'
 import TemplatePreview from './TemplatePreview'
 import { PolicyTemplate } from './PolicyTemplates.constants'
+import { PolicyRoles } from '../PolicyEditor'
+import PolicyResources from '../PolicyResources'
 
 interface Props {
   templates: PolicyTemplate[]
@@ -29,17 +31,20 @@ const PolicyTemplates: FC<Props> = ({
         />
         <TemplatePreview selectedTemplate={selectedTemplate} />
       </div>
-      <div className="dark:border-dark flex w-full items-center justify-end gap-3 border-t px-6 py-4">
-        <span className="text-scale-900 text-sm">
-          This will override any existing code you've written
-        </span>
-        <Button
-          type="primary"
-          disabled={isEmpty(selectedTemplate)}
-          onClick={() => onUseTemplate(selectedTemplate)}
-        >
-          Use this template
-        </Button>
+      <div className="dark:border-dark flex w-full items-center justify-between gap-3 border-t px-6 py-4">
+        <PolicyResources policyLinkPrompt="Need help? Check out the Policy resources" />
+        <div className="flex gap-2">
+          <span className="text-scale-900 text-sm">
+            This will override any existing code you've written
+          </span>
+          <Button
+            type="primary"
+            disabled={isEmpty(selectedTemplate)}
+            onClick={() => onUseTemplate(selectedTemplate)}
+          >
+            Use this template
+          </Button>
+        </div>
       </div>
     </div>
   )

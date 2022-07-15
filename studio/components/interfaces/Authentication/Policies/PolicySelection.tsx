@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { IconEdit, IconGrid, Modal } from '@supabase/ui'
 import CardButton from 'components/ui/CardButton'
+import PolicyResources from './PolicyResources'
 
 interface Props {
   description: string
@@ -57,17 +58,7 @@ const PolicySelection: FC<Props> = ({
             onClick={onViewEditor}
           />
         </div>
-        <p className="text-scale-1100 text-sm">
-          Not sure what policies are? Check out our resources{' '}
-          <a
-            target="_blank"
-            className="text-brand-900 hover:text-brand-1200 transition-colors"
-            href="https://supabase.com/docs/guides/auth#policies"
-          >
-            here
-          </a>
-          .
-        </p>
+        <PolicyResources policyLinkPrompt='Not sure what policies are? Check out our resources' />
       </div>
     </Modal.Content>
   )
